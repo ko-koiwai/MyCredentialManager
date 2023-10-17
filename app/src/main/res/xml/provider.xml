@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- https://developer.android.com/training/sign-in/credential-provider#declare-supported -->
+<credential-provider xmlns:android="http://schemas.android.com/apk/res/android">
+    <capabilities>
+        <capability name="android.credentials.TYPE_PASSWORD_CREDENTIAL" />
+        <capability name="androidx.credentials.TYPE_PUBLIC_KEY_CREDENTIAL" />
+    </capabilities>
+</credential-provider>

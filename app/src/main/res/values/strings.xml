@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">My CredMan</string>
+    <string name="title_activity_get_credential">GetCredentialActivity</string>
+</resources>
