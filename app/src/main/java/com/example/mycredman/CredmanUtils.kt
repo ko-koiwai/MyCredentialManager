@@ -132,7 +132,8 @@ object CredmanUtils {
     fun validateRpId(info: androidx.credentials.provider.CallingAppInfo, rpid:String): String{
         var origin = appInfoToOrigin(info)
         val rpIdForRexEx = rpid.replace(".","""\.""")
-        if (Regex("""^https://([A-Za-z0-9\-.]*\.)?"""+rpIdForRexEx+"""/.?""").matches(origin)){
+        if (Regex("""^https://([A-Za-z0-9\-.]*\.)?"""+rpIdForRexEx+"""($|/.*)""").matches(origin)){
+            //take out  "https://" and trailing slash "/" to make origin a pure domain.
             origin = rpid
         }
         return origin
