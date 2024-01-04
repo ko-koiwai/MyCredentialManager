@@ -163,7 +163,7 @@ class GetCredentialActivity : AppCompatActivity() {
 
 @Serializable
 data class GetPublicKeyCredentialRequestJson(
-    val allowCredentials:Array<AllowCredential>,
+    val allowCredentials:Array<AllowCredential>? = null,
     val challenge:String,
     val rpId:String,
     val userVerification: String,
