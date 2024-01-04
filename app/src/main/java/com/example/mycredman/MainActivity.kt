@@ -88,13 +88,13 @@ class MainActivity : AppCompatActivity() {
             val requestInfo = intent.getBundleExtra("CREDENTIAL_DATA")
 
             publicKeyRequests.forEach { credentialOption ->
-                Log.d("MyCredMan", "requsetJson:${credentialOption.requestJson}")
+                Log.d("MainActivity", "requsetJson:${credentialOption.requestJson}")
             }
 
             val credIdEnc = requestInfo?.getString("credId")
             val requestJson = Json.decodeFromString<GetPublicKeyCredentialRequestJson>(publicKeyRequests[0].requestJson)
-            Log.d("MyCredMan", "onCreate rpid:${requestJson.rpId}")
-            Log.d("MyCredMan", "${credIdEnc}")
+            Log.d("MainActivity", "onCreate rpid:${requestJson.rpId}")
+            Log.d("MainActivity", "${credIdEnc}")
 
 // Get the saved passkey from your database based on the credential ID
 // from the publickeyRequest
@@ -109,6 +109,7 @@ class MainActivity : AppCompatActivity() {
             val origin = CredmanUtils.appInfoToOrigin(getRequest.callingAppInfo)
             val packageName = getRequest.callingAppInfo.packageName
             val clientDataHash = publicKeyRequests[0].requestData.getByteArray("androidx.credentials.BUNDLE_KEY_CLIENT_DATA_HASH")
+            Log.d("MainActivity","+++ clientDataHash: "+CredmanUtils.b64Encode(clientDataHash!!))
 
             validatePasskey(
                 publicKeyRequests[0].requestJson,
@@ -170,12 +171,12 @@ class MainActivity : AppCompatActivity() {
                             shape = RoundedCornerShape(20.dp)
                         )
                         .clickable(onClick = {
-                            Log.d("MyCredMan", "onClick")
+                            Log.d("MainActivity", "onClick")
                             intent.putExtra("ServiceName", it.serviceName)
                             intent.putExtra("ServiceNameUrl", it.rpid)
                             intent.putExtra("ServiceNameId", it.displayName)
                             intent.putExtra("stringcredentialId", it.credentialId)
-                            Log.d("MyCredMan",it.credentialId.toString())
+                            Log.d("MainActivity",it.credentialId.toString())
                             startActivity(intent)
                         })
                         .padding(16.dp)
@@ -209,7 +210,7 @@ class MainActivity : AppCompatActivity() {
         clientDataHash: ByteArray?,
         accountId: String?
     ) {
-        Log.d("MyCredMan", "===requestJson===: "+requestJson)
+        Log.d("MainActivity", "===requestJson===: "+requestJson)
 
         val request = PublicKeyCredentialCreationOptions(requestJson)
 
@@ -252,7 +253,7 @@ class MainActivity : AppCompatActivity() {
 
                 // check if rpid is a subdomain of origin
                 val rpid = CredmanUtils.validateRpId(callingAppInfo!!,request.rp.id)
-                Log.d("MyCredMan", "===rpid === :" + rpid)
+                Log.d("MainActivity", "===rpid === :" + rpid)
 
                 // Save passkey in your database as per your own implementation
 
@@ -317,13 +318,13 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun populateEasyAccessorFields(json: String, rpid:String , keyPair: KeyPair, credentialId: ByteArray):String{
-        Log.d("MyCredMan","=== populateEasyAccessorFields BEFORE === "+ json)
+        Log.d("MainActivity","=== populateEasyAccessorFields BEFORE === "+ json)
         val response = Json.decodeFromString<CreatePublicKeyCredentialResponseJson>(json)
         response.response.publicKeyAlgorithm = -7 // ES256
         response.response.publicKey = CredmanUtils.b64Encode(keyPair.public.encoded)
         response.response.authenticatorData = getAuthData(rpid, credentialId, keyPair)
 
-        Log.d("MyCredMan","=== populateEasyAccessorFields AFTER === "+ Json.encodeToString(response))
+        Log.d("MainActivity","=== populateEasyAccessorFields AFTER === "+ Json.encodeToString(response))
         return Json.encodeToString(response)
 
     }
@@ -389,7 +390,7 @@ class MainActivity : AppCompatActivity() {
                         clientDataHash = clientDataHash
                     )
 
-                    Log.d("MyCredMan", "response.dataToSign(): ${CredmanUtils.b64Encode(response.dataToSign())}")
+                    Log.d("MainActivity", "response.dataToSign(): ${CredmanUtils.b64Encode(response.dataToSign())}")
 
                     val sig = Signature.getInstance("SHA256withECDSA")
                     sig.initSign(privateKey)

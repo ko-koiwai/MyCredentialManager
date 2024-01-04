@@ -194,11 +194,12 @@ class MyCredentialProviderService: androidx.credentials.provider.CredentialProvi
 
         val rpid = CredmanUtils.validateRpId(callingAppInfo,request.rpId)
         val creds = MyCredentialDataManager.load(this, rpid)
-        Log.d("MyCredMan", "requestJson:" + option.requestJson)
-        Log.d("MyCredMan", "rpid:" + rpid)
+        Log.d("ProviderService", "requestJson:" + option.requestJson)
+        Log.d("ProviderService", "rpid: $rpid")
 
 
         for (passkey in creds){
+            Log.d("ProviderService", "Found Passkey: " +passkey.displayName)
             val data = Bundle()
             data.putString("credId", CredmanUtils.b64Encode(passkey.credentialId))
             passkeyEntries.add(

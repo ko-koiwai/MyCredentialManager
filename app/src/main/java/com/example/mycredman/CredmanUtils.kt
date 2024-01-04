@@ -9,6 +9,8 @@ object CredmanUtils {
 
     fun appInfoToOrigin(info: androidx.credentials.provider.CallingAppInfo): String {
 
+//        Log.d("CredmanUtils","!!!+++ PackageName:"+info.packageName );
+
         // https://www.gstatic.com/gpm-passkeys-privileged-apps/apps.json .)
         val privilegedAllowlist = """
             {
@@ -101,17 +103,18 @@ object CredmanUtils {
         val cert = info.signingInfo.apkContentsSigners[0].toByteArray()
         val md = MessageDigest.getInstance("SHA-256")
         val certHash = md.digest(cert)
-        Log.d("MyCredMan","!!!+++ apkhash +++!!!: ${b64Encode(certHash)}"  )
+        Log.d("CredmanUtils","!!!+++ apkhash +++!!!: ${b64Encode(certHash)}"  )
 
         // This is the format for origin
         var origin: String
         try{
             origin = info.getOrigin(privilegedAllowlist)!! // go to the catch clause when null
         }catch(e:Exception ){
-            Log.e("MyCredMan",e.toString()  )
+            Log.e("CredmanUtils",e.toString()  )
             origin="android:apk-key-hash:${b64Encode(certHash)}"
         }
-        Log.d("MyCredMan","!!!+++ origin +++!!!: ${origin}"  )
+        Log.d("CredmanUtils","!!!+++ origin +++!!!: ${origin}"  )
+
 
         return origin
     }
@@ -131,6 +134,7 @@ object CredmanUtils {
 
     fun validateRpId(info: androidx.credentials.provider.CallingAppInfo, rpid:String): String{
         var origin = appInfoToOrigin(info)
+        Log.d("CredmanUtils","!!!+++ rpid: $rpid");
         val rpIdForRexEx = rpid.replace(".","""\.""")
         if (Regex("""^https://([A-Za-z0-9\-.]*\.)?"""+rpIdForRexEx+"""($|/.*)""").matches(origin)){
             //take out  "https://" and trailing slash "/" to make origin a pure domain.
