@@ -399,8 +399,21 @@ class MainActivity : AppCompatActivity() {
                     val credential = FidoPublicKeyCredential(
                         rawId = credId, response = response
                         , authenticatorAttachment = "platform")
+
+                    Log.d("MainActivity", "+++ credential.json(): "+ credential.json())
+//                    var credentialJson = credential.json()
+
+                    // add clientDataJSON to the response
+                    val clientDataJSONb64 = getClientDataJSONb64(origin, CredmanUtils.b64Encode( request.challenge))
+                    val delimiter = "response\":{"
+                    val credentialJson = credential.json().substringBeforeLast(delimiter)+ delimiter +
+                            "\"clientDataJSON\":\"$clientDataJSONb64\","+
+                            credential.json().substringAfterLast(delimiter)
+
+                    Log.d("MainActivity", "+++ credentialJson: "+ credentialJson)
+
                     val result = Intent()
-                    val passkeyCredential = PublicKeyCredential(credential.json())
+                    val passkeyCredential = PublicKeyCredential(credentialJson)
                     PendingIntentHandler.setGetCredentialResponse(
                         result, GetCredentialResponse(passkeyCredential)
                     )
@@ -420,6 +433,18 @@ class MainActivity : AppCompatActivity() {
             .setNegativeButtonText("Cancel") // this needs to be added when using BIOMETRIC
             .build()
         biometricPrompt.authenticate(promptInfo)
+    }
+
+
+    private fun getClientDataJSONb64(origin: String,challenge:String): String {
+
+        val origin = origin.replace(Regex("/$"), "")
+
+        val jsonString =
+            "{\"type\":\"webauthn.get\",\"challenge\":\"$challenge\",\"origin\":\"$origin\",\"crossOrigin\":false}"
+        val jsonByteArray = jsonString.toByteArray()
+        Log.d("MainActivity","+++ ClientDataJSON: $jsonString")
+        return CredmanUtils.b64Encode(jsonByteArray)
     }
 
 
