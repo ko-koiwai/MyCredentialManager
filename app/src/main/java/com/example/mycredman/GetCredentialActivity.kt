@@ -38,14 +38,14 @@ class GetCredentialActivity : AppCompatActivity() {
         publicKeyRequests.forEach { credentialOption ->
 //            credentialOption.requestData.keySet().forEach { key ->
 //                val value = credentialOption.requestData.get(key)
-//                Log.d("MyCredMan", "key: $key, value: $value")
+//                Log.d("GetCredActivity", "key: $key, value: $value")
 //            }
-            Log.d("MyCredMan", "requsetJson:${credentialOption.requestJson}")
+            Log.d("GetCredActivity", "requsetJson: ${credentialOption.requestJson}")
         }
 
         val credIdEnc = requestInfo?.getString("credId")
         val requestJson = Json.decodeFromString<GetPublicKeyCredentialRequestJson>(publicKeyRequests[0].requestJson)
-        Log.d("MyCredMan", "rpid:${requestJson.rpId}")
+        Log.d("GetCredActivity", "rpid: ${requestJson.rpId}")
 
 // Get the saved passkey from your database based on the credential ID
 // from the publickeyRequest
@@ -120,6 +120,7 @@ class GetCredentialActivity : AppCompatActivity() {
                 val credential = FidoPublicKeyCredential(
                     rawId = credId, response = response
                     , authenticatorAttachment = "platform")
+                Log.d("GetCredActivity", "+++ credential.json(): "+ credential.json())
                 val result = Intent()
                 val passkeyCredential = PublicKeyCredential(credential.json())
                 PendingIntentHandler.setGetCredentialResponse(
@@ -163,7 +164,7 @@ class GetCredentialActivity : AppCompatActivity() {
 
 @Serializable
 data class GetPublicKeyCredentialRequestJson(
-    val allowCredentials:Array<AllowCredential>,
+    val allowCredentials:Array<AllowCredential>? = null,
     val challenge:String,
     val rpId:String,
     val userVerification: String,
